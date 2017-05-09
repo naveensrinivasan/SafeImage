@@ -1,0 +1,9 @@
+package: github.com/naveensrinivasan/SafeImage
+import:
+- package: cloud.google.com/go
+  version: ~0.7.0
+  subpackages:
+  - vision
+- package: golang.org/x/net
+  subpackages:
+  - context
