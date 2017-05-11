@@ -106,7 +106,7 @@ func awsimagevalidation(filename string) error {
 		log.Fatal(err)
 	}
 	for _, item := range result.ModerationLabels {
-		fmt.Println("aws :- ", item.Name)
+		fmt.Println("aws :- ", *item.Name)
 	}
 	return nil
 
