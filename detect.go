@@ -1,7 +1,6 @@
 package main
 
 import (
-	b64 "encoding/base64"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,6 +20,8 @@ import (
 var (
 	sess *session.Session
 	svc  *rekognition.Rekognition
+	//Replace this with the google auth json
+	auth = "/Users/naveen/google-auth.json"
 )
 
 type hashSet struct {
@@ -54,7 +55,7 @@ func init() {
 	svc = rekognition.New(sess)
 }
 func main() {
-	imagesdir := "/Users/naveen/Downloads/safeimage/"
+	imagesdir := "./safeimage/"
 	set := newSet()
 	getBadWords(set)
 
@@ -92,14 +93,10 @@ func awsimagevalidation(filename string) error {
 		return err
 	}
 
-	encoded := make([]byte, b64.StdEncoding.EncodedLen(len(b)))
-	b64.StdEncoding.Encode(encoded, b)
 	request := &rekognition.DetectModerationLabelsInput{
-		Image: &rekognition.Image{ // Required
+		Image: &rekognition.Image{
 			Bytes: b,
 		},
-
-		//	MinConfidence: aws.Float64(10)
 	}
 	result, err := svc.DetectModerationLabels(request)
 	if err != nil {
@@ -109,13 +106,12 @@ func awsimagevalidation(filename string) error {
 		fmt.Println("aws :- ", *item.Name)
 	}
 	return nil
-
 }
 
 func getBadWords(hashset *hashSet) {
 	badwordfiles := []string{"en.txt", "fr.txt"}
 	for _, f := range badwordfiles {
-		badwordsdir := "/Users/naveen/Downloads/badwords/"
+		badwordsdir := "./badwords/"
 		bytes, err := ioutil.ReadFile(filepath.Join(badwordsdir, f))
 
 		if err != nil {
@@ -165,7 +161,7 @@ func dumpResults(w io.Writer, annotation *vision.SafeSearchAnnotation, filename 
 func detectText(file string) ([]*vision.EntityAnnotation, error) {
 	ctx := context.Background()
 
-	client, err := vision.NewClient(ctx, option.WithServiceAccountFile("/Users/naveen/Downloads/playground-4ae5b3036c38.json"))
+	client, err := vision.NewClient(ctx, option.WithServiceAccountFile(auth))
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +184,7 @@ func detectText(file string) ([]*vision.EntityAnnotation, error) {
 func detectSafeSearch(w io.Writer, file string) (*vision.SafeSearchAnnotation, error) {
 	ctx := context.Background()
 
-	client, err := vision.NewClient(ctx, option.WithServiceAccountFile("/Users/naveen/Downloads/playground-4ae5b3036c38.json"))
+	client, err := vision.NewClient(ctx, option.WithServiceAccountFile(auth))
 	if err != nil {
 		return nil, err
 	}
