@@ -79,7 +79,7 @@ func main() {
 
 		for _, text := range texts {
 			if set.Contains(text.Description) {
-				fmt.Fprintf(os.Stdout, "File : %s has inappropriate language %s \n", fullName, text.Description)
+				fmt.Fprintf(os.Stdout, "google : %s has inappropriate language %s \n", fullName, text.Description)
 			}
 		}
 		awsimagevalidation(fullName)
@@ -125,7 +125,7 @@ func getBadWords(hashset *hashSet) {
 func dumpResults(w io.Writer, annotation *vision.SafeSearchAnnotation, filename string) {
 
 	if annotation.Adult > 2 || annotation.Medical > 2 || annotation.Spoof > 2 || annotation.Violence > 2 {
-		fmt.Fprint(w, "File :", filename)
+		fmt.Fprint(w, "google : ", filename)
 	}
 	if annotation.Adult == 3 {
 		fmt.Fprintln(w, " Is likely adult content")
